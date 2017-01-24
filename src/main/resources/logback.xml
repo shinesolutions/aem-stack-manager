@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="DAILY_ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>mcollective.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<fileNamePattern>mcollective.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
+			<maxHistory>10</maxHistory>
+		</rollingPolicy>
+
+		<encoder>
+			<pattern>%relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="com.shinesolutions.aemmcollective" level="debug" additivity="false">
+		<appender-ref ref="DAILY_ROLLING_FILE" />
+	</logger>
+
+	<root level="error">
+		<appender-ref ref="DAILY_ROLLING_FILE" />
+	</root>
+
+</configuration>
