@@ -1,4 +1,4 @@
-package com.shinesolutions.aemmcollective.config;
+package com.shinesolutions.aemstackmanager.config;
 
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;

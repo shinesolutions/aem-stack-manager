@@ -1,8 +1,8 @@
-package com.shinesolutions.aemmcollective.handler;
+package com.shinesolutions.aemstackmanager.handler;
 
 import org.springframework.stereotype.Component;
 
-import com.shinesolutions.aemmcollective.model.EventMessage;
+import com.shinesolutions.aemstackmanager.model.EventMessage;
 
 @Component
 public class AutoscaleTerminateEventHandler implements EventHandler {

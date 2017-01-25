@@ -1,4 +1,4 @@
-package com.shinesolutions.aemmcollective.service;
+package com.shinesolutions.aemstackmanager.service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.amazon.sqs.javamessaging.SQSConnection;
-import com.shinesolutions.aemmcollective.handler.MessageHandler;
+import com.shinesolutions.aemstackmanager.handler.MessageHandler;
 
 /**
  * Listener for the SQS queue. Will add itself as a message listener upon startup

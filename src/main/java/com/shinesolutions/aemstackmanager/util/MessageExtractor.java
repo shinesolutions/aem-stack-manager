@@ -1,11 +1,11 @@
-package com.shinesolutions.aemmcollective.util;
+package com.shinesolutions.aemstackmanager.util;
 
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shinesolutions.aemmcollective.model.EventMessage;
+import com.shinesolutions.aemstackmanager.model.EventMessage;
 
 public class MessageExtractor {
 

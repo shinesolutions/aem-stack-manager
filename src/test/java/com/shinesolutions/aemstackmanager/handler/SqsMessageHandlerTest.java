@@ -1,4 +1,4 @@
-package com.shinesolutions.aemmcollective.handler;
+package com.shinesolutions.aemstackmanager.handler;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -24,9 +24,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.shinesolutions.aemmcollective.handler.EventHandler;
-import com.shinesolutions.aemmcollective.handler.SqsMessageHandler;
-import com.shinesolutions.aemmcollective.model.EventMessage;
+import com.shinesolutions.aemstackmanager.model.EventMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SqsMessageHandlerTest {

@@ -2,16 +2,16 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.shinesolutions</groupId>
-  <artifactId>aem-mcollective-runner</artifactId>
+  <artifactId>aem-stack-manager</artifactId>
   <packaging>jar</packaging>
-  <name>aem-mcollective-runner</name>
-  <version>0.9.0</version>
-  <url>https://github.com/shinesolutions/aem-mcollective-runner</url>
+  <name>aem-stack-manager</name>
+  <version>0.0.1</version>
+  <url>https://github.com/shinesolutions/aem-stack-manager</url>
   <description></description>
   <scm>
-    <connection>scm:git:git@github.com:shinesolutions/aem-mcollective-runner.git</connection>
-    <developerConnection>scm:git:git@github.com:shinesolutions/aem-mcollective-runner.git</developerConnection>
-    <url>https://github.com/shinesolutions/aem-mcollective-runner</url>
+    <connection>scm:git:git@github.com:shinesolutions/aem-stack-manager.git</connection>
+    <developerConnection>scm:git:git@github.com:shinesolutions/aem-stack-manager.git</developerConnection>
+    <url>https://github.com/shinesolutions/aem-stack-manager</url>
   </scm>
   <prerequisites>
     <maven>2.2.0</maven>
@@ -94,7 +94,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>com.shinesolutions.aemmcollective.AemMCollectiveRunner</mainClass>
+              <mainClass>com.shinesolutions.aemstackmanager.AemStackManager</mainClass>
             </manifest>
           </archive>
         </configuration>

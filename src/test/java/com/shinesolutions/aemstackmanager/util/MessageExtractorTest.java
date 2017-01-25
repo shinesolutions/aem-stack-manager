@@ -1,4 +1,4 @@
-package com.shinesolutions.aemmcollective.util;
+package com.shinesolutions.aemstackmanager.util;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -11,8 +11,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shinesolutions.aemmcollective.model.EventMessage;
-import com.shinesolutions.aemmcollective.util.MessageExtractor;
+import com.shinesolutions.aemstackmanager.model.EventMessage;
 
 public class MessageExtractorTest {
 

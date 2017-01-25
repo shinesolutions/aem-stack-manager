@@ -1,4 +1,4 @@
-package com.shinesolutions.aemmcollective.model;
+package com.shinesolutions.aemstackmanager.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

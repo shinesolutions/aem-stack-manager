@@ -1,4 +1,4 @@
-package com.shinesolutions.aemmcollective.handler;
+package com.shinesolutions.aemstackmanager.handler;
 
 import javax.jms.Message;
 

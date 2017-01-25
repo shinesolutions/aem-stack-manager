@@ -2,10 +2,10 @@
 <configuration>
 
 	<appender name="DAILY_ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>mcollective.log</file>
+		<file>aem-stack-manager.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- daily rollover -->
-			<fileNamePattern>mcollective.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
+			<fileNamePattern>aem-stack-manager.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
 			<maxHistory>10</maxHistory>
 		</rollingPolicy>
 
@@ -14,7 +14,7 @@
 		</encoder>
 	</appender>
 
-	<logger name="com.shinesolutions.aemmcollective" level="debug" additivity="false">
+	<logger name="com.shinesolutions.aemstackmanager" level="debug" additivity="false">
 		<appender-ref ref="DAILY_ROLLING_FILE" />
 	</logger>
 

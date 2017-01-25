@@ -1,4 +1,4 @@
-package com.shinesolutions.aemmcollective.handler;
+package com.shinesolutions.aemstackmanager.handler;
 
 import java.util.Map;
 
@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.shinesolutions.aemmcollective.model.EventMessage;
-import com.shinesolutions.aemmcollective.util.MessageExtractor;
+import com.shinesolutions.aemstackmanager.model.EventMessage;
+import com.shinesolutions.aemstackmanager.util.MessageExtractor;
 
 /*
  * Invokes the correct action based on the message type

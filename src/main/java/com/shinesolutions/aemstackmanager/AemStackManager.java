@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.shinesolutions.aemmcollective;
+package com.shinesolutions.aemstackmanager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,13 +27,13 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan
-public class AemMCollectiveRunner implements CommandLineRunner {
+public class AemStackManager implements CommandLineRunner {
 
-    private final static Logger logger = LoggerFactory.getLogger(AemMCollectiveRunner.class);
+    private final static Logger logger = LoggerFactory.getLogger(AemStackManager.class);
 
     public static void main(String[] args) throws Exception {
-        logger.info("Starting AEM mCollective Runner");
-        SpringApplication.run(AemMCollectiveRunner.class, args);
+        logger.info("Starting AEM Stack Manager");
+        SpringApplication.run(AemStackManager.class, args);
     }
 
     @Override

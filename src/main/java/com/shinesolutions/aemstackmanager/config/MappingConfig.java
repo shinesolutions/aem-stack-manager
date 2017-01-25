@@ -1,4 +1,4 @@
-package com.shinesolutions.aemmcollective.config;
+package com.shinesolutions.aemstackmanager.config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,9 +6,9 @@ import java.util.Map;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.shinesolutions.aemmcollective.handler.AutoscaleLaunchEventHandler;
-import com.shinesolutions.aemmcollective.handler.AutoscaleTerminateEventHandler;
-import com.shinesolutions.aemmcollective.handler.EventHandler;
+import com.shinesolutions.aemstackmanager.handler.AutoscaleLaunchEventHandler;
+import com.shinesolutions.aemstackmanager.handler.AutoscaleTerminateEventHandler;
+import com.shinesolutions.aemstackmanager.handler.EventHandler;
 
 @Configuration
 public class MappingConfig {
