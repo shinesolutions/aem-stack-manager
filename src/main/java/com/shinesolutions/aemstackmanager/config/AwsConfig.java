@@ -6,9 +6,7 @@ import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.regions.Region;
 import com.amazonaws.regions.RegionUtils;
-import com.amazonaws.regions.Regions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +26,9 @@ public class AwsConfig {
 
     @Value("${aws.sqs.queueName}")
     private String queueName;
+
+    @Value("${aws.region}")
+    private String awsRegion;
 
     @Value("${aws.client.useProxy}")
     private Boolean useProxy;
@@ -62,11 +63,8 @@ public class AwsConfig {
     public SQSConnection sqsConnection(AWSCredentialsProvider awsCredentialsProvider,
                                        ClientConfiguration awsClientConfig) throws JMSException {
 
-        //TODO: Need to pass region in.
-        Region region = RegionUtils.getRegion(Regions.AP_SOUTHEAST_2.getName());
-
         SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder()
-                .withRegion(region)
+                .withRegion(RegionUtils.getRegion(awsRegion))
                 .withAWSCredentialsProvider(awsCredentialsProvider)
                 .withClientConfiguration(awsClientConfig)
                 .build();
