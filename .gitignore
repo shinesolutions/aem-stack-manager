@@ -6,3 +6,4 @@ target
 .idea/
 aem-stack-manager.iml
 *.log
+logs

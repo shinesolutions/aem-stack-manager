@@ -21,7 +21,7 @@ import javax.jms.MessageListener;
  * When a message is received, it will pass it to the @see MessageHandler
  */
 @Component
-public class MessageReceiver implements  MessageListener {
+public class MessageReceiver implements MessageListener {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

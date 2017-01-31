@@ -26,5 +26,5 @@ java -jar aem-stack-manager-x.x.x.jar
 ```
 or as a 'fully executable' direct application (only works on Unix/Linux based systems):
 ```
-./aem-aem-stack-manager-x.x.x.jar
+./aem-stack-manager-x.x.x.jar
 ```
