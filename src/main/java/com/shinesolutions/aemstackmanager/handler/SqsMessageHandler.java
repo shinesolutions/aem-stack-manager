@@ -1,17 +1,15 @@
 package com.shinesolutions.aemstackmanager.handler;
 
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.jms.Message;
-import javax.jms.TextMessage;
-
+import com.shinesolutions.aemstackmanager.model.EventMessage;
+import com.shinesolutions.aemstackmanager.util.MessageExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.shinesolutions.aemstackmanager.model.EventMessage;
-import com.shinesolutions.aemstackmanager.util.MessageExtractor;
+import javax.annotation.Resource;
+import javax.jms.Message;
+import javax.jms.TextMessage;
+import java.util.Map;
 
 /*
  * Invokes the correct action based on the message type
@@ -25,10 +23,10 @@ public class SqsMessageHandler implements MessageHandler {
     private Map<String, EventHandler> eventTypeHandlerMappings;
 
     public boolean handleMessage(Message message) {
-        
+
         boolean handleSuccess = false;
         EventMessage eventMessage = null;
-        
+
         try {
             String messageBody = ((TextMessage)message).getText();
             logger.debug("Raw message body: " + messageBody);
@@ -49,7 +47,7 @@ public class SqsMessageHandler implements MessageHandler {
                 try {
                     logger.debug("Handling event: " + eventType);
                     handleSuccess = eventHandler.handleEvent(eventMessage);
-                    
+
                 } catch (Exception e) {
                     logger.error("Failed to handle event for message type: " + eventType, e);
                 }

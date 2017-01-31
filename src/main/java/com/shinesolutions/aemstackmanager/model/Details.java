@@ -3,6 +3,7 @@ package com.shinesolutions.aemstackmanager.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Details {
+
     @JsonProperty("Subnet ID")
     private String subnetID;
 
@@ -24,4 +25,5 @@ public class Details {
     public void setAvailabilityZone(String availabilityZone) {
         this.availabilityZone = availabilityZone;
     }
+
 }

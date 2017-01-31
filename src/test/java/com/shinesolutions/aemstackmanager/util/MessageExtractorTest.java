@@ -1,29 +1,30 @@
 package com.shinesolutions.aemstackmanager.util;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
-import java.io.File;
-import java.util.Scanner;
-
-import org.junit.Test;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinesolutions.aemstackmanager.model.EventMessage;
+import org.junit.Test;
+
+import java.io.File;
+import java.util.Scanner;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 public class MessageExtractorTest {
+
 
     @Test
     @SuppressWarnings("resource")
     public void testExtractEventMessageSuccess() throws Exception {
 
-        File sampleFile = new File(getClass().getResource("/sample-sqs-message-body-1.json").getFile());
-        String sampleFileContent = new Scanner(sampleFile).useDelimiter("\\Z").next();
+        File sampleFileMessageOnly = new File(getClass().getResource("/sample-sqs-message-body-1.json").getFile());
+        File sampleFileFull = new File(getClass().getResource("/sample-sqs-message-body-2.json").getFile());
+        String sampleFileContent = new Scanner(sampleFileFull).useDelimiter("\\Z").next();
 
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(sampleFile);
+        JsonNode root = mapper.readTree(sampleFileMessageOnly);
 
         EventMessage eventMsg = MessageExtractor.extractEventMessage(sampleFileContent);
 
@@ -51,9 +52,10 @@ public class MessageExtractorTest {
         assertThat(eventMsg.getCause(), equalTo(root.path("Cause").asText()));
         assertThat(eventMsg.getEvent(), equalTo(root.path("Event").asText()));
     }
-    
+
     @Test(expected=JsonParseException.class)
     public void testExtractEventMessageParseFail() throws Exception {
         MessageExtractor.extractEventMessage("Invalid string");
     }
+
 }

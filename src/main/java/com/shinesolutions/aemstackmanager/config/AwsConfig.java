@@ -1,32 +1,52 @@
 package com.shinesolutions.aemstackmanager.config;
 
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
-
+import com.amazon.sqs.javamessaging.SQSConnection;
+import com.amazon.sqs.javamessaging.SQSConnectionFactory;
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.regions.RegionUtils;
+import com.amazonaws.util.EC2MetadataUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.amazon.sqs.javamessaging.SQSConnection;
-import com.amazon.sqs.javamessaging.SQSConnectionFactory;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.RegionUtils;
+import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
+import javax.jms.Session;
 
 @Configuration
 @Profile("default")
 public class AwsConfig {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Value("${aws.sqs.queueName}")
     private String queueName;
 
-    @Value("${aws.region}")
-    private String regionString;
-    
-    
+    @Value("${aws.client.useProxy}")
+    private Boolean useProxy;
+
+    @Value("${aws.client.protocol}")
+    private String clientProtocol;
+
+    @Value("${aws.client.proxy.host}")
+    private String clientProxyHost;
+
+    @Value("${aws.client.proxy.port}")
+    private Integer clientProxyPort;
+
+    @Value("${aws.client.connection.timeout}")
+    private Integer clientConnectionTimeout;
+
+    @Value("${aws.client.max.errorRetry}")
+    private Integer clientMaxErrorRetry;
+
+
     @Bean
     public AWSCredentialsProvider awsCredentialsProvider() {
         /*
@@ -36,23 +56,18 @@ public class AwsConfig {
          */
         return new DefaultAWSCredentialsProviderChain();
     }
-    
-    @Bean
-    public Region awsRegion() {
-        return RegionUtils.getRegion(regionString);
-    }
 
     @Bean
-    public SQSConnection sqsConnection(AWSCredentialsProvider awsCredentialsProvider, Region awsRegion) throws JMSException {
+    public SQSConnection sqsConnection(AWSCredentialsProvider awsCredentialsProvider,
+                                       ClientConfiguration awsClientConfig) throws JMSException {
 
         SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder()
-            .withRegion(awsRegion)
-            .withAWSCredentialsProvider(awsCredentialsProvider).build();
+                .withRegion(RegionUtils.getRegion(EC2MetadataUtils.getEC2InstanceRegion())) //Gets region form meta data
+                .withAWSCredentialsProvider(awsCredentialsProvider)
+                .withClientConfiguration(awsClientConfig)
+                .build();
 
-        // Create the connection
-        SQSConnection connection = connectionFactory.createConnection();
-
-        return connection;
+        return connectionFactory.createConnection();
     }
 
     @Bean
@@ -66,6 +81,22 @@ public class AwsConfig {
         MessageConsumer consumer = session.createConsumer(session.createQueue(queueName));
 
         return consumer;
+    }
+
+    @Bean
+    public ClientConfiguration awsClientConfig() {
+        ClientConfiguration clientConfig = new ClientConfiguration();
+
+        if (useProxy) {
+            clientConfig.setProxyHost(clientProxyHost);
+            clientConfig.setProxyPort(clientProxyPort);
+        }
+
+        clientConfig.setProtocol(Protocol.valueOf(clientProtocol.toUpperCase()));
+        clientConfig.setConnectionTimeout(clientConnectionTimeout);
+        clientConfig.setMaxErrorRetry(clientMaxErrorRetry);
+
+        return clientConfig;
     }
 
 }

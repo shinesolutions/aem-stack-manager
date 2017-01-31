@@ -1,21 +1,6 @@
 package com.shinesolutions.aemstackmanager.handler;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.util.Map;
-import java.util.Scanner;
-
-import javax.jms.TextMessage;
-
+import com.shinesolutions.aemstackmanager.model.EventMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +9,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.shinesolutions.aemstackmanager.model.EventMessage;
+import javax.jms.TextMessage;
+import java.io.File;
+import java.util.Map;
+import java.util.Scanner;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SqsMessageHandlerTest {
@@ -41,7 +34,7 @@ public class SqsMessageHandlerTest {
 
     @Before
     public void setup() throws Exception {
-        testMessage = createMessageFromFile("/sample-sqs-message-body-raw.txt");
+        testMessage = createMessageFromFile("/sample-sqs-message-body-2.json");
 
         mockEventHandler = mock(EventHandler.class);
 
@@ -61,7 +54,7 @@ public class SqsMessageHandlerTest {
         EventMessage eventMessage = eventMessageCaptor.getValue();
 
         assertThat(result, equalTo(true));
-        assertThat(eventMessage.getActivityId(), equalTo("d9acbc52-51c1-1175-a339-a472d0222a98"));
+        assertThat(eventMessage.getActivityId(), equalTo("fb11ba55-11c8-3375-a349-aa12d0222a98"));
     }
 
     @Test
@@ -107,5 +100,4 @@ public class SqsMessageHandlerTest {
         when(textMessage.getText()).thenReturn(sampleFileContent);
         return textMessage;
     }
-
 }

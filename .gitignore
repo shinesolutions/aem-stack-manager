@@ -4,4 +4,5 @@ target
 .project
 .settings/
 .idea/
-aem-mcollective-runner.iml
+aem-stack-manager.iml
+*.log

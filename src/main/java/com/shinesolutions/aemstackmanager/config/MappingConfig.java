@@ -1,14 +1,13 @@
 package com.shinesolutions.aemstackmanager.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.shinesolutions.aemstackmanager.handler.AutoscaleLaunchEventHandler;
 import com.shinesolutions.aemstackmanager.handler.AutoscaleTerminateEventHandler;
 import com.shinesolutions.aemstackmanager.handler.EventHandler;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class MappingConfig {
@@ -19,14 +18,12 @@ public class MappingConfig {
         final AutoscaleTerminateEventHandler autoscaleTerminateEventHandler,
         final AutoscaleLaunchEventHandler autoscaleLaunchEventHandler) {
 
-        Map<String, EventHandler> mappings = new HashMap<String, EventHandler>() {
+        return new HashMap<String, EventHandler>() {
             {
                 put("autoscaling:EC2_INSTANCE_TERMINATE", autoscaleTerminateEventHandler);
                 put("autoscaling:EC2_INSTANCE_LAUNCH", autoscaleLaunchEventHandler);
             }
         };
-
-        return mappings;
     }
 
 }
