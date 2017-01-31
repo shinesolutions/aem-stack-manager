@@ -1,6 +1,6 @@
 package com.shinesolutions.aemstackmanager.handler;
 
-import com.shinesolutions.aemstackmanager.model.EventMessage;
+import com.shinesolutions.aemstackmanager.model.TaskMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,38 +23,38 @@ import static org.mockito.Mockito.*;
 public class SqsMessageHandlerTest {
 
     @Mock
-    private Map<String, EventHandler> eventTypeHandlerMappings;
+    private Map<String, TaskHandler> taskHandlerMappings;
 
     @InjectMocks
     private SqsMessageHandler sqsMessageHandler;
 
     private TextMessage testMessage;
 
-    private EventHandler mockEventHandler;
+    private TaskHandler mockTaskHandler;
 
     @Before
     public void setup() throws Exception {
         testMessage = createMessageFromFile("/sample-sqs-message-body-2.json");
 
-        mockEventHandler = mock(EventHandler.class);
+        mockTaskHandler = mock(TaskHandler.class);
 
-        when(eventTypeHandlerMappings.get("autoscaling:EC2_INSTANCE_TERMINATE")).thenReturn(mockEventHandler);
+        when(taskHandlerMappings.get("promote-author")).thenReturn(mockTaskHandler);
     }
 
     @Test
     public void testSuccess() {
-        ArgumentCaptor<EventMessage> eventMessageCaptor = ArgumentCaptor.forClass(EventMessage.class);
+        ArgumentCaptor<TaskMessage> taskMessageCaptor = ArgumentCaptor.forClass(TaskMessage.class);
 
-        when(mockEventHandler.handleEvent(any(EventMessage.class))).thenReturn(true);
+        when(mockTaskHandler.handleTask(any(TaskMessage.class))).thenReturn(true);
 
         boolean result = sqsMessageHandler.handleMessage(testMessage);
 
-        verify(mockEventHandler, times(1)).handleEvent(eventMessageCaptor.capture());
+        verify(mockTaskHandler, times(1)).handleTask(taskMessageCaptor.capture());
 
-        EventMessage eventMessage = eventMessageCaptor.getValue();
+        TaskMessage taskMessage = taskMessageCaptor.getValue();
 
         assertThat(result, equalTo(true));
-        assertThat(eventMessage.getActivityId(), equalTo("fb11ba55-11c8-3375-a349-aa12d0222a98"));
+        assertThat(taskMessage.getActivityId(), equalTo("fb11ba55-11c8-3375-a349-aa12d0222a98"));
     }
 
     @Test
@@ -63,29 +63,29 @@ public class SqsMessageHandlerTest {
 
         boolean result = sqsMessageHandler.handleMessage(testMessage);
 
-        verify(mockEventHandler, never()).handleEvent(any(EventMessage.class));
+        verify(mockTaskHandler, never()).handleTask(any(TaskMessage.class));
 
         assertThat(result, equalTo(false));
     }
 
     @Test
-    public void testNoEventHandlerFound() {
-        when(eventTypeHandlerMappings.get("autoscaling:EC2_INSTANCE_TERMINATE")).thenReturn(null);
+    public void testNoTaskHandlerFound() {
+        when(taskHandlerMappings.get("promote-author")).thenReturn(null);
 
         boolean result = sqsMessageHandler.handleMessage(testMessage);
 
-        verify(mockEventHandler, never()).handleEvent(any(EventMessage.class));
+        verify(mockTaskHandler, never()).handleTask(any(TaskMessage.class));
 
         assertThat(result, equalTo(false));
     }
 
     @Test
-    public void testEventHandlerError() {
-        doThrow(new RuntimeException("Test exception")).when(mockEventHandler).handleEvent(any(EventMessage.class));
+    public void testTaskHandlerError() {
+        doThrow(new RuntimeException("Test exception")).when(mockTaskHandler).handleTask(any(TaskMessage.class));
 
         boolean result = sqsMessageHandler.handleMessage(testMessage);
 
-        verify(mockEventHandler, times(1)).handleEvent(any(EventMessage.class));
+        verify(mockTaskHandler, times(1)).handleTask(any(TaskMessage.class));
 
         assertThat(result, equalTo(false));
     }

@@ -3,9 +3,9 @@ package com.shinesolutions.aemstackmanager.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /*
- * Represents the message but for a standard AEM Orchestrator message 
+ * Represents the message but for a standard AEM Stack Manager message
  */
-public class EventMessage {
+public class TaskMessage {
 
     @JsonProperty("Progress")
     private Integer progress;
@@ -55,8 +55,8 @@ public class EventMessage {
     @JsonProperty("Cause")
     private String cause;
 
-    @JsonProperty("Event")
-    private String event;
+    @JsonProperty("Task")
+    private String task;
 
     public Integer getProgress() {
         return progress;
@@ -186,12 +186,12 @@ public class EventMessage {
         this.cause = cause;
     }
 
-    public String getEvent() {
-        return event;
+    public String getTask() {
+        return task;
     }
 
-    public void setEvent(String event) {
-        this.event = event;
+    public void setTask(String task) {
+        this.task = task;
     }
 
 }

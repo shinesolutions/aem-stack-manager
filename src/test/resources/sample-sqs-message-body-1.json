@@ -18,5 +18,5 @@
   },
   "AutoScalingGroupName": "<AutoScalingGroupName>",
   "Cause": "Accidental coffee spill",
-  "Event": "autoscaling:EC2_INSTANCE_TERMINATE"
+  "Task": "promote-author"
 }

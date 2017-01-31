@@ -4,13 +4,13 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shinesolutions.aemstackmanager.model.EventMessage;
+import com.shinesolutions.aemstackmanager.model.TaskMessage;
 
 import java.io.IOException;
 
 public class MessageExtractor {
 
-    public static EventMessage extractEventMessage(String sqsMessageBody)
+    public static TaskMessage extractTaskMessage(String sqsMessageBody)
             throws JsonParseException, JsonMappingException, IOException {
 
         ObjectMapper mapper = new ObjectMapper();
@@ -22,9 +22,9 @@ public class MessageExtractor {
         // to map to object
         String preparedBody = messageNode.replace("\\\"", "\"");
 
-        ObjectMapper eventMapper = new ObjectMapper();
+        ObjectMapper taskMapper = new ObjectMapper();
 
-        return eventMapper.readValue(preparedBody, EventMessage.class);
+        return taskMapper.readValue(preparedBody, TaskMessage.class);
 
     }
 }

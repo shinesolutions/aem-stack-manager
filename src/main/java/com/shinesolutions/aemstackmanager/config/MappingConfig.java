@@ -1,8 +1,9 @@
 package com.shinesolutions.aemstackmanager.config;
 
-import com.shinesolutions.aemstackmanager.handler.AutoscaleLaunchEventHandler;
-import com.shinesolutions.aemstackmanager.handler.AutoscaleTerminateEventHandler;
-import com.shinesolutions.aemstackmanager.handler.EventHandler;
+import com.shinesolutions.aemstackmanager.handler.DeployArtifactTaskHandler;
+import com.shinesolutions.aemstackmanager.handler.DeployArtifactsTaskHandler;
+import com.shinesolutions.aemstackmanager.handler.PromoteAuthorTaskHandler;
+import com.shinesolutions.aemstackmanager.handler.TaskHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,14 +15,16 @@ public class MappingConfig {
 
     @Bean
     @SuppressWarnings("serial")
-    public Map<String, EventHandler> eventTypeHandlerMappings(
-        final AutoscaleTerminateEventHandler autoscaleTerminateEventHandler,
-        final AutoscaleLaunchEventHandler autoscaleLaunchEventHandler) {
+    public Map<String, TaskHandler> taskHandlerMappings(
+            final PromoteAuthorTaskHandler promoteAuthorTaskHandler,
+            final DeployArtifactsTaskHandler deployArtifactsTaskHandler,
+            final DeployArtifactTaskHandler deployArtifactTaskHandler) {
 
-        return new HashMap<String, EventHandler>() {
+        return new HashMap<String, TaskHandler>() {
             {
-                put("autoscaling:EC2_INSTANCE_TERMINATE", autoscaleTerminateEventHandler);
-                put("autoscaling:EC2_INSTANCE_LAUNCH", autoscaleLaunchEventHandler);
+                put("promote-author", promoteAuthorTaskHandler);
+                put("deploy-artifacts", deployArtifactsTaskHandler);
+                put("deploy-artifact", deployArtifactTaskHandler);
             }
         };
     }

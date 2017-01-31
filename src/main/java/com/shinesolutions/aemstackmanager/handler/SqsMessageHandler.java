@@ -1,6 +1,6 @@
 package com.shinesolutions.aemstackmanager.handler;
 
-import com.shinesolutions.aemstackmanager.model.EventMessage;
+import com.shinesolutions.aemstackmanager.model.TaskMessage;
 import com.shinesolutions.aemstackmanager.util.MessageExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,36 +20,36 @@ public class SqsMessageHandler implements MessageHandler {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Resource
-    private Map<String, EventHandler> eventTypeHandlerMappings;
+    private Map<String, TaskHandler> taskHandlerMappings;
 
     public boolean handleMessage(Message message) {
 
         boolean handleSuccess = false;
-        EventMessage eventMessage = null;
+        TaskMessage taskMessage = null;
 
         try {
             String messageBody = ((TextMessage)message).getText();
             logger.debug("Raw message body: " + messageBody);
-            eventMessage = MessageExtractor.extractEventMessage(messageBody);
+            taskMessage = MessageExtractor.extractTaskMessage(messageBody);
         } catch (Exception e) {
-            logger.error("Error when reading message body, event will not be handled", e);
+            logger.error("Error when reading message body, task will not be handled", e);
         }
 
-        if (eventMessage != null) {
-            String eventType = eventMessage.getEvent();
+        if (taskMessage != null) {
+            String task = taskMessage.getTask();
 
             // Get class mapping for message type:
-            EventHandler eventHandler = eventTypeHandlerMappings.get(eventType);
+            TaskHandler taskHandler = taskHandlerMappings.get(task);
 
-            if (eventHandler == null) {
-                logger.error("No event handler found for message type: " + eventType);
+            if (taskHandler == null) {
+                logger.error("No task handler found for message: " + task);
             } else {
                 try {
-                    logger.debug("Handling event: " + eventType);
-                    handleSuccess = eventHandler.handleEvent(eventMessage);
+                    logger.debug("Handling task: " + task);
+                    handleSuccess = taskHandler.handleTask(taskMessage);
 
                 } catch (Exception e) {
-                    logger.error("Failed to handle event for message type: " + eventType, e);
+                    logger.error("Failed to handle task for message: " + task, e);
                 }
             }
         }

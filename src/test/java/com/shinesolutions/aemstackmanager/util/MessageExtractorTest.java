@@ -3,7 +3,7 @@ package com.shinesolutions.aemstackmanager.util;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shinesolutions.aemstackmanager.model.EventMessage;
+import com.shinesolutions.aemstackmanager.model.TaskMessage;
 import org.junit.Test;
 
 import java.io.File;
@@ -17,7 +17,7 @@ public class MessageExtractorTest {
 
     @Test
     @SuppressWarnings("resource")
-    public void testExtractEventMessageSuccess() throws Exception {
+    public void testExtractTaskMessageSuccess() throws Exception {
 
         File sampleFileMessageOnly = new File(getClass().getResource("/sample-sqs-message-body-1.json").getFile());
         File sampleFileFull = new File(getClass().getResource("/sample-sqs-message-body-2.json").getFile());
@@ -26,36 +26,36 @@ public class MessageExtractorTest {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(sampleFileMessageOnly);
 
-        EventMessage eventMsg = MessageExtractor.extractEventMessage(sampleFileContent);
+        TaskMessage taskMessage = MessageExtractor.extractTaskMessage(sampleFileContent);
 
-        assertThat(eventMsg.getProgress(), equalTo(root.path("Progress").asInt()));
-        assertThat(eventMsg.getAccountId(), equalTo(root.path("AccountId").asText()));
-        assertThat(eventMsg.getDescription(), equalTo(root.path("Description").asText()));
-        assertThat(eventMsg.getRequestId(), equalTo(root.path("RequestId").asText()));
-        assertThat(eventMsg.getEndTime(), equalTo(root.path("EndTime").asText()));
-        assertThat(eventMsg.getAutoScalingGroupARN(), equalTo(root.path("AutoScalingGroupARN").asText()));
+        assertThat(taskMessage.getProgress(), equalTo(root.path("Progress").asInt()));
+        assertThat(taskMessage.getAccountId(), equalTo(root.path("AccountId").asText()));
+        assertThat(taskMessage.getDescription(), equalTo(root.path("Description").asText()));
+        assertThat(taskMessage.getRequestId(), equalTo(root.path("RequestId").asText()));
+        assertThat(taskMessage.getEndTime(), equalTo(root.path("EndTime").asText()));
+        assertThat(taskMessage.getAutoScalingGroupARN(), equalTo(root.path("AutoScalingGroupARN").asText()));
 
-        assertThat(eventMsg.getActivityId(), equalTo(root.path("ActivityId").asText()));
-        assertThat(eventMsg.getStartTime(), equalTo(root.path("StartTime").asText()));
-        assertThat(eventMsg.getService(), equalTo(root.path("Service").asText()));
+        assertThat(taskMessage.getActivityId(), equalTo(root.path("ActivityId").asText()));
+        assertThat(taskMessage.getStartTime(), equalTo(root.path("StartTime").asText()));
+        assertThat(taskMessage.getService(), equalTo(root.path("Service").asText()));
 
-        assertThat(eventMsg.getTime(), equalTo(root.path("Time").asText()));
-        assertThat(eventMsg.getEC2InstanceId(), equalTo(root.path("EC2InstanceId").asText()));
-        assertThat(eventMsg.getStatusCode(), equalTo(root.path("StatusCode").asText()));
+        assertThat(taskMessage.getTime(), equalTo(root.path("Time").asText()));
+        assertThat(taskMessage.getEC2InstanceId(), equalTo(root.path("EC2InstanceId").asText()));
+        assertThat(taskMessage.getStatusCode(), equalTo(root.path("StatusCode").asText()));
 
         JsonNode details = root.path("Details");
-        assertThat(eventMsg.getDetails().getSubnetID(), equalTo(details.path("Subnet ID").asText()));
-        assertThat(eventMsg.getDetails().getAvailabilityZone(), equalTo(details.path("Availability Zone").asText()));
+        assertThat(taskMessage.getDetails().getSubnetID(), equalTo(details.path("Subnet ID").asText()));
+        assertThat(taskMessage.getDetails().getAvailabilityZone(), equalTo(details.path("Availability Zone").asText()));
 
-        assertThat(eventMsg.getStatusMessage(), equalTo(root.path("StatusMessage").asText()));
-        assertThat(eventMsg.getAutoScalingGroupName(), equalTo(root.path("AutoScalingGroupName").asText()));
-        assertThat(eventMsg.getCause(), equalTo(root.path("Cause").asText()));
-        assertThat(eventMsg.getEvent(), equalTo(root.path("Event").asText()));
+        assertThat(taskMessage.getStatusMessage(), equalTo(root.path("StatusMessage").asText()));
+        assertThat(taskMessage.getAutoScalingGroupName(), equalTo(root.path("AutoScalingGroupName").asText()));
+        assertThat(taskMessage.getCause(), equalTo(root.path("Cause").asText()));
+        assertThat(taskMessage.getTask(), equalTo(root.path("Task").asText()));
     }
 
     @Test(expected=JsonParseException.class)
-    public void testExtractEventMessageParseFail() throws Exception {
-        MessageExtractor.extractEventMessage("Invalid string");
+    public void testExtractTaskMessageParseFail() throws Exception {
+        MessageExtractor.extractTaskMessage("Invalid string");
     }
 
 }
