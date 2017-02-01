@@ -52,7 +52,7 @@ public class MessageReceiver implements MessageListener {
             }
 
         } catch (JMSException e) {
-            logger.error("Error while recieving message", e);
+            logger.error("Error while receiving message", e);
         }
     }
 

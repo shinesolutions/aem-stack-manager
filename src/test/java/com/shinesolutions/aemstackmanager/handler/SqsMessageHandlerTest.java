@@ -54,7 +54,7 @@ public class SqsMessageHandlerTest {
         TaskMessage taskMessage = taskMessageCaptor.getValue();
 
         assertThat(result, equalTo(true));
-        assertThat(taskMessage.getActivityId(), equalTo("fb11ba55-11c8-3375-a349-aa12d0222a98"));
+        assertThat(taskMessage.getTask(), equalTo("promote-author"));
     }
 
     @Test

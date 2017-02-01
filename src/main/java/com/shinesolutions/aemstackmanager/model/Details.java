@@ -4,26 +4,36 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Details {
 
-    @JsonProperty("Subnet ID")
-    private String subnetID;
+    @JsonProperty("descriptor_file")
+    private String descriptorFile;
 
-    @JsonProperty("Availability Zone")
-    private String availabilityZone;
+    @JsonProperty("component")
+    private String component;
 
-    public String getSubnetID() {
-        return subnetID;
+    @JsonProperty("artifact")
+    private String artifact;
+
+    public String getDescriptorFile() {
+        return descriptorFile;
     }
 
-    public void setSubnetID(String subnetID) {
-        this.subnetID = subnetID;
+    public void setDescriptorFile(String descriptorFile) {
+        this.descriptorFile = descriptorFile;
     }
 
-    public String getAvailabilityZone() {
-        return availabilityZone;
+    public String getComponent() {
+        return component;
     }
 
-    public void setAvailabilityZone(String availabilityZone) {
-        this.availabilityZone = availabilityZone;
+    public void setComponent(String component) {
+        this.component = component;
     }
 
+    public String getArtifact() {
+        return artifact;
+    }
+
+    public void setArtifact(String artifact) {
+        this.artifact = artifact;
+    }
 }

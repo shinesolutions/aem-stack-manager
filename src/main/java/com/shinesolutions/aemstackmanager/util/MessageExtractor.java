@@ -20,7 +20,7 @@ public class MessageExtractor {
 
         // Body contains \" instead of just ". Need to replace before attempting
         // to map to object
-        String preparedBody = messageNode.replace("\\\"", "\"");
+        String preparedBody = messageNode.replace("\\\"", "\"").replace("'", "\"");
 
         ObjectMapper taskMapper = new ObjectMapper();
 
