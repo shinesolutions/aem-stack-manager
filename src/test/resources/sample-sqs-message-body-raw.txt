@@ -1,1 +1,1 @@
-{\"task\": \"promote-author\", \"stack_prefix\": \"StackABC\", \"details\": { \"descriptor_file\": \"descriptor-file.json\", \"component\": \"author\", \"artifact\": \"artifact.zip\" } }
+{\"task\": \"promote-author\", \"stack_prefix\": \"StackABC\", \"details\": { \"descriptor\": \"descriptor-file.json\", \"component\": \"author\", \"artifact\": \"artifact.zip\" } }

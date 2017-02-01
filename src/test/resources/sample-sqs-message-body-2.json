@@ -3,7 +3,7 @@
  "MessageId" : "82f1c8a0-81111-59b4-84f4-99acc2170312",
  "TopicArn" : "<Topic Arn>",
  "Subject" : "Auto Scaling: launch",
- "Message" : "{\"task\": \"promote-author\", \"stack_prefix\": \"StackABC\", \"details\": { \"descriptor_file\": \"descriptor-file.json\", \"component\": \"author\", \"artifact\": \"artifact.zip\" } }",
+ "Message" : "{\"task\": \"promote-author\", \"stack_prefix\": \"StackABC\", \"details\": { \"descriptor\": \"descriptor-file.json\", \"component\": \"author\", \"artifact\": \"artifact.zip\" } }",
  "Timestamp" : "2017-01-11T00:00:00.000Z",
  "SignatureVersion" : "1",
  "Signature" : "DAFaXmSktOaVBwhWXmgQWQF0vHPrKy5L/NA+2pbJfdUXsQ6==",

@@ -32,7 +32,7 @@ public class MessageExtractorTest {
         assertThat(taskMessage.getStackPrefix(), equalTo(root.path("stack_prefix").asText()));
 
         JsonNode details = root.path("details");
-        assertThat(taskMessage.getDetails().getDescriptorFile(), equalTo(details.path("descriptor_file").asText()));
+        assertThat(taskMessage.getDetails().getDescriptor(), equalTo(details.path("descriptor").asText()));
         assertThat(taskMessage.getDetails().getComponent(), equalTo(details.path("component").asText()));
         assertThat(taskMessage.getDetails().getArtifact(), equalTo(details.path("artifact").asText()));
 
