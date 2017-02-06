@@ -16,7 +16,6 @@ import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.RegionUtils;
-import com.amazonaws.util.EC2MetadataUtils;
 
 @Configuration
 @Profile("default")
@@ -24,6 +23,9 @@ public class AwsConfig {
 
     @Value("${aws.sqs.queueName}")
     private String queueName;
+
+    @Value("${aws.region}")
+    private String awsRegion;
 
     @Value("${aws.client.useProxy}")
     private Boolean useProxy;
@@ -59,10 +61,10 @@ public class AwsConfig {
                                        ClientConfiguration awsClientConfig) throws JMSException {
 
         SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder()
-            .withRegion(RegionUtils.getRegion(EC2MetadataUtils.getEC2InstanceRegion())) //Gets region form meta data
-            .withAWSCredentialsProvider(awsCredentialsProvider)
-            .withClientConfiguration(awsClientConfig)
-            .build();
+                .withRegion(RegionUtils.getRegion(awsRegion))
+                .withAWSCredentialsProvider(awsCredentialsProvider)
+                .withClientConfiguration(awsClientConfig)
+                .build();
 
         return connectionFactory.createConnection();
     }
