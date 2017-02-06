@@ -24,7 +24,7 @@ public class SqsMessageHandler implements MessageHandler {
 
     public boolean handleMessage(Message message) {
 
-        boolean handleSuccess = false;
+        boolean deleteMessage = false;
         TaskMessage taskMessage = null;
 
         try {
@@ -43,10 +43,11 @@ public class SqsMessageHandler implements MessageHandler {
 
             if (taskHandler == null) {
                 logger.error("No task handler found for message: " + task);
+                deleteMessage = true;
             } else {
                 try {
                     logger.debug("Handling task: " + task);
-                    handleSuccess = taskHandler.handleTask(taskMessage);
+                    deleteMessage = taskHandler.handleTask(taskMessage);
 
                 } catch (Exception e) {
                     logger.error("Failed to handle task for message: " + task, e);
@@ -54,7 +55,7 @@ public class SqsMessageHandler implements MessageHandler {
             }
         }
 
-        return handleSuccess;
+        return deleteMessage;
     }
 
 }
