@@ -1,5 +1,14 @@
 package com.shinesolutions.aemstackmanager.config;
 
+import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
+import javax.jms.Session;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+
 import com.amazon.sqs.javamessaging.SQSConnection;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.ClientConfiguration;
@@ -7,22 +16,10 @@ import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.RegionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
 
 @Configuration
 @Profile("default")
 public class AwsConfig {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Value("${aws.sqs.queueName}")
     private String queueName;
@@ -36,10 +33,10 @@ public class AwsConfig {
     @Value("${aws.client.protocol}")
     private String clientProtocol;
 
-    @Value("${aws.client.proxy.host}")
+    @Value("${aws.client.proxy.host:@null}")
     private String clientProxyHost;
 
-    @Value("${aws.client.proxy.port}")
+    @Value("${aws.client.proxy.port:@null}")
     private Integer clientProxyPort;
 
     @Value("${aws.client.connection.timeout}")

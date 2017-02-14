@@ -76,7 +76,7 @@ public class SqsMessageHandlerTest {
 
         verify(mockTaskHandler, never()).handleTask(any(TaskMessage.class));
 
-        assertThat(result, equalTo(false));
+        assertThat(result, equalTo(true));
     }
 
     @Test
