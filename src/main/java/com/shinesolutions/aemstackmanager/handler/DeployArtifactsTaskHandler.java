@@ -25,7 +25,7 @@ public class DeployArtifactsTaskHandler implements TaskHandler {
         logger.debug("Handling Task: " + message);
 
         String builtCommand = command.replaceAll("\\{stack_prefix}", message.getStackPrefix());
-        builtCommand = builtCommand.replaceAll("\\{descriptor}", message.getDetails().getDescriptor());
+        builtCommand = builtCommand.replaceAll("\\{descriptor_file}", message.getDetails().getDescriptorFile());
 
 
         return commandExecutor.execute(builtCommand);

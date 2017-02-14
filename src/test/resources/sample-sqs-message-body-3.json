@@ -1,0 +1,1 @@
+{"task": "deploy-artifacts", "details": {"descriptor_file": "deploy-artifacts-descriptor.json"}, "stack_prefix": "StackABC"}

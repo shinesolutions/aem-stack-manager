@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Details {
 
-    @JsonProperty("descriptor")
-    private String descriptor;
+    @JsonProperty("descriptor_file")
+    private String descriptorFile;
 
     @JsonProperty("component")
     private String component;
@@ -13,12 +13,12 @@ public class Details {
     @JsonProperty("artifact")
     private String artifact;
 
-    public String getDescriptor() {
-        return descriptor;
+    public String getDescriptorFile() {
+        return descriptorFile;
     }
 
-    public void setDescriptor(String descriptor) {
-        this.descriptor = descriptor;
+    public void setDescriptorFile(String descriptorFile) {
+        this.descriptorFile = descriptorFile;
     }
 
     public String getComponent() {

@@ -9,6 +9,7 @@
 
     <appender name="DAILY_ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>aem-stack-manager.log</file>
+
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
             <fileNamePattern>logs/aem-stack-manager.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
@@ -16,7 +17,7 @@
         </rollingPolicy>
 
         <encoder>
-            <pattern>%relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 

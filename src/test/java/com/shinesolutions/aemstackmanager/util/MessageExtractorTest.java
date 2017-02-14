@@ -32,7 +32,7 @@ public class MessageExtractorTest {
         assertThat(taskMessage.getStackPrefix(), equalTo(root.path("stack_prefix").asText()));
 
         JsonNode details = root.path("details");
-        assertThat(taskMessage.getDetails().getDescriptor(), equalTo(details.path("descriptor").asText()));
+        assertThat(taskMessage.getDetails().getDescriptorFile(), equalTo(details.path("descriptor_file").asText()));
         assertThat(taskMessage.getDetails().getComponent(), equalTo(details.path("component").asText()));
         assertThat(taskMessage.getDetails().getArtifact(), equalTo(details.path("artifact").asText()));
 
@@ -42,5 +42,27 @@ public class MessageExtractorTest {
     public void testExtractTaskMessageParseFail() throws Exception {
         MessageExtractor.extractTaskMessage("Invalid string");
     }
+
+    @Test
+    @SuppressWarnings("resource")
+    public void testExtractTaskPatialMessageSuccess() throws Exception {
+
+        File sampleFileMessageOnly = new File(getClass().getResource("/sample-sqs-message-body-3.json").getFile());
+        File sampleFileFull = new File(getClass().getResource("/sample-sqs-message-body-4.json").getFile());
+        String sampleFileContent = new Scanner(sampleFileFull).useDelimiter("\\Z").next();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(sampleFileMessageOnly);
+
+        TaskMessage taskMessage = MessageExtractor.extractTaskMessage(sampleFileContent);
+
+        assertThat(taskMessage.getTask(), equalTo(root.path("task").asText()));
+        assertThat(taskMessage.getStackPrefix(), equalTo(root.path("stack_prefix").asText()));
+
+        JsonNode details = root.path("details");
+        assertThat(taskMessage.getDetails().getDescriptorFile(), equalTo(details.path("descriptor_file").asText()));
+
+    }
+
 
 }
