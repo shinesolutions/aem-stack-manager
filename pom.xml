@@ -5,7 +5,7 @@
   <artifactId>aem-stack-manager</artifactId>
   <packaging>jar</packaging>
   <name>aem-stack-manager</name>
-  <version>0.0.2</version>
+  <version>0.9.0</version>
   <url>https://github.com/shinesolutions/aem-stack-manager</url>
   <description>Java application for managing AEM infrastructure created using aem-aws-stack-builder</description>
   <scm>
