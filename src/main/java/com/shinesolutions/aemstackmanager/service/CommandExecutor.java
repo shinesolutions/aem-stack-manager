@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Component
@@ -35,7 +34,13 @@ public class CommandExecutor {
 
         ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        LogOutputStream outputStream = new LogOutputStream() {
+            @Override
+            protected void processLine(String line, int level) {
+                logger.debug(line);
+            }
+        };
+
         PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
 
         Executor executor = new DefaultExecutor();
@@ -52,22 +57,18 @@ public class CommandExecutor {
             resultHandler.waitFor();
             int exitValue = resultHandler.getExitValue();
 
-            if (exitValue == 0){
-                logger.debug("Command execution successful. output: " + outputStream.toString());
-            } else {
-                throw resultHandler.getException();
-            }
+            logger.debug("Command execution complete. exitValue: " + exitValue);
 
         } catch (ExecuteException e){
 
-            logger.error("Error executing command: " + command + ", output: " + outputStream.toString(), e);
+            logger.error("Error executing command: " + command + ", check logs for errors", e);
 
             //remove from queue
             return true;
 
         } catch (IOException | InterruptedException e) {
 
-            logger.error("Error executing command: " + command + ", output: " + outputStream.toString(), e);
+            logger.error("Error executing command: " + command + ", check logs for errors", e);
 
             //leave in queue for retry.
             return false;
