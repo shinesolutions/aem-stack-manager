@@ -1,9 +1,6 @@
 package com.shinesolutions.aemstackmanager.config;
 
-import com.shinesolutions.aemstackmanager.handler.DeployArtifactTaskHandler;
-import com.shinesolutions.aemstackmanager.handler.DeployArtifactsTaskHandler;
-import com.shinesolutions.aemstackmanager.handler.PromoteAuthorTaskHandler;
-import com.shinesolutions.aemstackmanager.handler.TaskHandler;
+import com.shinesolutions.aemstackmanager.handler.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,13 +15,18 @@ public class MappingConfig {
     public Map<String, TaskHandler> taskHandlerMappings(
             final PromoteAuthorTaskHandler promoteAuthorTaskHandler,
             final DeployArtifactsTaskHandler deployArtifactsTaskHandler,
-            final DeployArtifactTaskHandler deployArtifactTaskHandler) {
+            final DeployArtifactTaskHandler deployArtifactTaskHandler,
+            final ExportPackageTaskHandler exportPackageTaskHandler,
+            final ImportPackageTaskHandler importPackageTaskHandler
+            ) {
 
         return new HashMap<String, TaskHandler>() {
             {
                 put("promote-author", promoteAuthorTaskHandler);
                 put("deploy-artifacts", deployArtifactsTaskHandler);
                 put("deploy-artifact", deployArtifactTaskHandler);
+                put("export-package", exportPackageTaskHandler);
+                put("import-package", importPackageTaskHandler);
             }
         };
     }

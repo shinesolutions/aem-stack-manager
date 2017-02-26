@@ -13,6 +13,18 @@ public class Details {
     @JsonProperty("artifact")
     private String artifact;
 
+    @JsonProperty("package_group")
+    private String packageGroup;
+
+    @JsonProperty("package_name")
+    private String packageName;
+
+    @JsonProperty("package_datestamp")
+    private String packageDatestamp;
+
+    @JsonProperty("package_filter")
+    private String packageFilter;
+
     public String getDescriptorFile() {
         return descriptorFile;
     }
@@ -35,5 +47,37 @@ public class Details {
 
     public void setArtifact(String artifact) {
         this.artifact = artifact;
+    }
+
+    public String getPackageGroup() {
+        return packageGroup;
+    }
+
+    public void setPackageGroup(String packageGroup) {
+        this.packageGroup = packageGroup;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    public String getPackageDatestamp() {
+        return packageDatestamp;
+    }
+
+    public void setPackageDatestamp(String packageDatestamp) {
+        this.packageDatestamp = packageDatestamp;
+    }
+
+    public String getPackageFilter() {
+        return packageFilter;
+    }
+
+    public void setPackageFilter(String packageFilter) {
+        this.packageFilter = packageFilter;
     }
 }
