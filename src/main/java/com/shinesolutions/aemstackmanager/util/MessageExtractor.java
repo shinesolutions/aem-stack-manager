@@ -5,10 +5,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinesolutions.aemstackmanager.model.TaskMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class MessageExtractor {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(MessageExtractor.class);
 
     public static TaskMessage extractTaskMessage(String sqsMessageBody)
             throws JsonParseException, JsonMappingException, IOException {
@@ -18,9 +23,13 @@ public class MessageExtractor {
 
         String messageNode = root.path("Message").asText();
 
+        logger.debug("Original Message: " + messageNode);
+
         // Body contains \" instead of just ". Need to replace before attempting
         // to map to object
         String preparedBody = messageNode.replace("\\\"", "\"").replace("'", "\"");
+
+        logger.debug("Prepared Message: " + preparedBody);
 
         ObjectMapper taskMapper = new ObjectMapper();
 
