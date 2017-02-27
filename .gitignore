@@ -7,3 +7,5 @@ target
 aem-stack-manager.iml
 *.log
 logs
+pom.xml.releaseBackup
+release.properties
