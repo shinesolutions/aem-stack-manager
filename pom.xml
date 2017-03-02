@@ -1,17 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.shinesolutions</groupId>
   <artifactId>aem-stack-manager</artifactId>
   <packaging>jar</packaging>
   <name>aem-stack-manager</name>
-  <version>0.9.0</version>
+  <version>0.9.1-SNAPSHOT</version>
   <url>https://github.com/shinesolutions/aem-stack-manager</url>
   <description>Java application for managing AEM infrastructure created using aem-aws-stack-builder</description>
   <scm>
     <connection>scm:git:git@github.com:shinesolutions/aem-stack-manager.git</connection>
     <developerConnection>scm:git:git@github.com:shinesolutions/aem-stack-manager.git</developerConnection>
     <url>https://github.com/shinesolutions/aem-stack-manager</url>
+    <tag>HEAD</tag>
   </scm>
   <prerequisites>
     <maven>2.2.0</maven>
@@ -243,7 +243,6 @@
       <version>1.3</version>
     </dependency>
 
-
     <!-- Test -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -253,7 +252,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>LATEST</version>
+      <version>4.11</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
