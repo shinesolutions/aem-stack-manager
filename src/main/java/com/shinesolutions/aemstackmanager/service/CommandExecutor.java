@@ -19,47 +19,13 @@ public class CommandExecutor {
     @Value("${command.timeout}")
     private long timeout;
 
-    public boolean execute(String command){
-
-        logger.debug("Executing command: " + command);
-
-        CommandLine commandLine = new CommandLine(shell);
-
-        commandLine.addArguments(new String[] {
-                "-c",
-                command
-        },false);
-
-        DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
-
-        ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
-
-        LogOutputStream outputStream = new LogOutputStream() {
-            @Override
-            protected void processLine(String line, int level) {
-                logger.debug(line);
-            }
-        };
-
-        PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
-
-        Executor executor = new DefaultExecutor();
-        executor.setStreamHandler(streamHandler);
-        executor.setExitValue(1);
-        executor.setWatchdog(watchdog);
+    public boolean executeReturnBoolean(String command) {
 
         try {
 
-            executor.execute(commandLine, resultHandler);
+            execute(command);
 
-            // some time later the result handler callback was invoked so we
-            // can safely request the exit value
-            resultHandler.waitFor();
-            int exitValue = resultHandler.getExitValue();
-
-            logger.debug("Command execution complete. exitValue: " + exitValue);
-
-        } catch (ExecuteException e){
+        } catch (ExecuteException e) {
 
             logger.error("Error executing command: " + command + ", check logs for errors", e);
 
@@ -75,6 +41,79 @@ public class CommandExecutor {
         }
 
         return true;
+
+    }
+
+    public void execute(String command) throws IOException, InterruptedException {
+
+        LogOutputStream outputStream = new LogOutputStream() {
+            @Override
+            protected void processLine(String line, int level) {
+                logger.debug(line);
+            }
+        };
+
+        execute(command, outputStream);
+
+    }
+
+    private void execute(String command, LogOutputStream outputStream) throws IOException, InterruptedException {
+
+        logger.debug("Executing command: " + command);
+
+        CommandLine commandLine = new CommandLine(shell);
+
+        commandLine.addArguments(new String[]{
+                "-c",
+                command
+        }, false);
+
+        PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
+
+        Executor executor = new DefaultExecutor();
+        executor.setStreamHandler(streamHandler);
+        executor.setExitValue(1);
+
+        ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
+        executor.setWatchdog(watchdog);
+
+        try {
+
+            DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
+            executor.execute(commandLine, resultHandler);
+
+            // some time later the result handler callback was invoked so we
+            // can safely request the exit value
+            resultHandler.waitFor();
+            int exitValue = resultHandler.getExitValue();
+
+            logger.debug("Command execution complete. exitValue: " + exitValue);
+
+        } catch (IOException | InterruptedException e) {
+
+            logger.error("Error executing command: " + command + ", check logs for errors", e);
+
+            throw e;
+        }
+
+    }
+
+
+    public String executeReturnOutput(String command) throws IOException, InterruptedException {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        LogOutputStream outputStream = new LogOutputStream() {
+            @Override
+            protected void processLine(String line, int level) {
+                logger.debug(line);
+                stringBuilder.append(line);
+            }
+        };
+
+        execute(command, outputStream);
+
+        return stringBuilder.toString();
 
     }
 

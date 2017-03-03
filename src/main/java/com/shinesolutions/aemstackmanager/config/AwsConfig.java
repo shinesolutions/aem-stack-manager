@@ -1,14 +1,5 @@
 package com.shinesolutions.aemstackmanager.config;
 
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-
 import com.amazon.sqs.javamessaging.SQSConnection;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.ClientConfiguration;
@@ -16,6 +7,14 @@ import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.RegionUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+
+import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
+import javax.jms.Session;
 
 @Configuration
 @Profile("default")

@@ -30,7 +30,7 @@ public class ExportPackageTaskHandler implements TaskHandler {
         builtCommand = builtCommand.replaceAll("\\{package_group}", message.getDetails().getPackageGroup());
         builtCommand = builtCommand.replaceAll("\\{package_name}", message.getDetails().getPackageName());
         builtCommand = builtCommand.replaceAll("\\{package_filter}", message.getDetails().getPackageFilter());
-        return commandExecutor.execute(builtCommand);
+        return commandExecutor.executeReturnBoolean(builtCommand);
     }
 
 }

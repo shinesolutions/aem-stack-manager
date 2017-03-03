@@ -26,7 +26,7 @@ public class PromoteAuthorTaskHandler implements TaskHandler {
 
         String builtCommand = command.replaceAll("\\{stack_prefix}", message.getStackPrefix());
 
-        return commandExecutor.execute(builtCommand);
+        return commandExecutor.executeReturnBoolean(builtCommand);
     }
 
 }

@@ -17,7 +17,7 @@ import javax.jms.MessageListener;
 /**
  * Listener for the SQS queue. Will add itself as a message listener upon startup
  * and then start the connection.
- *
+ * <p>
  * When a message is received, it will pass it to the @see MessageHandler
  */
 @Component
@@ -43,7 +43,7 @@ public class MessageReceiver implements MessageListener {
                 boolean removeMessageFromQueue = messageHandler.handleMessage(message);
 
                 //Acknowledging the message with remove it from the queue
-                if(removeMessageFromQueue) {
+                if (removeMessageFromQueue) {
                     logger.info("Acknowledged message (removing from queue): " + message.getJMSMessageID());
                     message.acknowledge();
                 }

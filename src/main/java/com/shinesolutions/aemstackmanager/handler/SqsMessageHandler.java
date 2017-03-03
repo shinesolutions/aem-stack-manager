@@ -28,7 +28,7 @@ public class SqsMessageHandler implements MessageHandler {
         TaskMessage taskMessage = null;
 
         try {
-            String messageBody = ((TextMessage)message).getText();
+            String messageBody = ((TextMessage) message).getText();
             logger.debug("Raw message body: " + messageBody);
             taskMessage = MessageExtractor.extractTaskMessage(messageBody);
         } catch (Exception e) {

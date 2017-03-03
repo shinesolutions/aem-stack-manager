@@ -17,8 +17,9 @@ public class MappingConfig {
             final DeployArtifactsTaskHandler deployArtifactsTaskHandler,
             final DeployArtifactTaskHandler deployArtifactTaskHandler,
             final ExportPackageTaskHandler exportPackageTaskHandler,
-            final ImportPackageTaskHandler importPackageTaskHandler
-            ) {
+            final ImportPackageTaskHandler importPackageTaskHandler,
+            final OfflineSnapshotTaskHandler offlineSnapshotTaskHandler
+    ) {
 
         return new HashMap<String, TaskHandler>() {
             {
@@ -27,6 +28,7 @@ public class MappingConfig {
                 put("deploy-artifact", deployArtifactTaskHandler);
                 put("export-package", exportPackageTaskHandler);
                 put("import-package", importPackageTaskHandler);
+                put("offline-snapshot", offlineSnapshotTaskHandler);
             }
         };
     }

@@ -30,6 +30,6 @@ public class ImportPackageTaskHandler implements TaskHandler {
         builtCommand = builtCommand.replaceAll("\\{package_group}", message.getDetails().getPackageGroup());
         builtCommand = builtCommand.replaceAll("\\{package_name}", message.getDetails().getPackageName());
         builtCommand = builtCommand.replaceAll("\\{package_datestamp}", message.getDetails().getPackageDatestamp());
-        return commandExecutor.execute(builtCommand);
+        return commandExecutor.executeReturnBoolean(builtCommand);
     }
 }

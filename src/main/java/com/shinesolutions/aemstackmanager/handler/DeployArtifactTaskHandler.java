@@ -28,7 +28,7 @@ public class DeployArtifactTaskHandler implements TaskHandler {
         builtCommand = builtCommand.replaceAll("\\{component}", message.getDetails().getComponent());
         builtCommand = builtCommand.replaceAll("\\{artifact}", message.getDetails().getArtifact());
 
-        return commandExecutor.execute(builtCommand);
+        return commandExecutor.executeReturnBoolean(builtCommand);
     }
 
 }
