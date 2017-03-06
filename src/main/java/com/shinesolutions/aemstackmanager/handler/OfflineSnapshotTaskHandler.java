@@ -95,7 +95,7 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
             if (AUTHOR_PRIMARY.equals(stack.get(identity))) {
                 authorPrimaryIdentity = identity;
             } else if (AUTHOR_STANDBY.equals(stack.get(identity))) {
-                authorPrimaryIdentity = identity;
+                authorStandbyIdentity = identity;
             } else if (PUBLISH.equals(stack.get(identity))) {
                 publishIdentity = identity;
             }
