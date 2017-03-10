@@ -12,8 +12,12 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>logs/aem-stack-manager.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
+            <fileNamePattern>logs/aem-stack-manager.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 30 days' worth of history capped at 3GB total size -->
             <maxHistory>10</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+
         </rollingPolicy>
 
         <encoder>
