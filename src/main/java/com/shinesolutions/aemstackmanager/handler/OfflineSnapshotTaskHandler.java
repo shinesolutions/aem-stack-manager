@@ -113,9 +113,6 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
         //stop author-primary
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
 
-        //run offline-compaction on both author-primary and author-standby
-        commandExecutor.execute(offlineCompactionCommand.replaceAll("\\{stack_prefix}", stackPrefix));
-
         //take ebs snapshot of author-primary
         commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
 
