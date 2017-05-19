@@ -37,6 +37,25 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
     @Value("${command.startAem}")
     private String startAemCommand;
 
+    @Value("${command.enterStandbyByComponent}")
+    private String enterStandbyByComponentCommand;
+
+    @Value("${command.exitStandbyByComponent}")
+    private String exitStandbyByComponentCommand;
+
+    @Value("${command.enterStandbyByIdentity}")
+    private String enterStandbyByIdentityCommand;
+
+    @Value("${command.exitStandbyByIdentity}")
+    private String exitStandbyByIdentityCommand;
+
+    @Value("${command.ec2Metadata}")
+    private String ec2MetadataCommand;
+
+    @Value("${command.pairedInstance}")
+    private String pairedInstanceCommand;
+
+
     @Resource
     private CommandExecutor commandExecutor;
 
@@ -89,6 +108,7 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
         String authorPrimaryIdentity = null;
         String authorStandbyIdentity = null;
         String publishIdentity = null;
+        String publishDispatcherIdentity = null;
 
         for (String identity : stack.keySet()) {
 
@@ -98,6 +118,7 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
                 authorStandbyIdentity = identity;
             } else if (PUBLISH.equals(stack.get(identity))) {
                 publishIdentity = identity;
+                publishDispatcherIdentity = findPairedPublishDispatcher(publishIdentity);
             }
 
             if (authorPrimaryIdentity != null && authorStandbyIdentity != null && publishIdentity != null) {
@@ -106,6 +127,9 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
 
         }
 
+
+        //move all author-dispatcher instances into standby
+        commandExecutor.execute(enterStandbyByComponentCommand.replaceAll("\\{stack_prefix}", stackPrefix).replaceAll("\\{component}", "author-dispatcher"));
 
         //stop author-standby
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorStandbyIdentity));
@@ -122,6 +146,14 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
         //start aem on author-standby
         commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", authorStandbyIdentity));
 
+        //move all author-dispatcher instances out of standby
+        commandExecutor.execute(exitStandbyByComponentCommand.replaceAll("\\{stack_prefix}", stackPrefix).replaceAll("\\{component}", "author-dispatcher"));
+
+
+
+        //move the selected publish-dispatcher into standby mode
+        commandExecutor.execute(enterStandbyByIdentityCommand.replaceAll("\\{identity}", publishDispatcherIdentity));
+
         //stop aem on publish instance
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", publishIdentity));
 
@@ -130,6 +162,24 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
 
         //start aem on publish instance
         commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", publishIdentity));
+
+        //move the selected publish-dispatcher out of standby mode
+        commandExecutor.execute(exitStandbyByIdentityCommand.replaceAll("\\{identity}", publishDispatcherIdentity));
+
+
+    }
+
+    private String findPairedPublishDispatcher(String publishIdentity) throws IOException, InterruptedException {
+
+        String publishEc2Metadata = commandExecutor.executeReturnOutput(ec2MetadataCommand.replaceAll("\\{identity}", publishIdentity));
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        JsonNode ec2metaData = mapper.readTree("{\"objects\" : " + publishEc2Metadata + "}").get("objects");
+
+        String publishInstanceId = ec2metaData.findValue("instance-id").asText();
+
+        return commandExecutor.executeReturnOutput(pairedInstanceCommand.replaceAll("\\{instance_id}", publishInstanceId));
 
     }
 
