@@ -27,6 +27,7 @@ public class ImportPackageTaskHandler implements TaskHandler {
 
         String builtCommand = command.replaceAll("\\{stack_prefix}", message.getStackPrefix());
         builtCommand = builtCommand.replaceAll("\\{component}", message.getDetails().getComponent());
+        builtCommand = builtCommand.replaceAll("\\{source_stack_prefix}", message.getDetails().getSourceStackPrefix());
         builtCommand = builtCommand.replaceAll("\\{package_group}", message.getDetails().getPackageGroup());
         builtCommand = builtCommand.replaceAll("\\{package_name}", message.getDetails().getPackageName());
         builtCommand = builtCommand.replaceAll("\\{package_datestamp}", message.getDetails().getPackageDatestamp());

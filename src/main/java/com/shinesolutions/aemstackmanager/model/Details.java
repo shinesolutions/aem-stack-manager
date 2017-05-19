@@ -13,6 +13,9 @@ public class Details {
     @JsonProperty("artifact")
     private String artifact;
 
+    @JsonProperty("source_stack_prefix")
+    private String sourceStackPrefix;
+
     @JsonProperty("package_group")
     private String packageGroup;
 
@@ -79,5 +82,13 @@ public class Details {
 
     public void setPackageFilter(String packageFilter) {
         this.packageFilter = packageFilter;
+    }
+
+    public String getSourceStackPrefix() {
+        return sourceStackPrefix;
+    }
+
+    public void setSourceStackPrefix(String sourceStackPrefix) {
+        this.sourceStackPrefix = sourceStackPrefix;
     }
 }
