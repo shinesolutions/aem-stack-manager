@@ -2,6 +2,7 @@
 * remove compaction from offline snapshot task
 * move author dispatcher and publish dispatcher to standby mode when stopping aem a part of offline snapshot task
 * add source_stack_prefix to import package command.
+* create offline compaction snapshot task
 
 
 ### 0.9.1
