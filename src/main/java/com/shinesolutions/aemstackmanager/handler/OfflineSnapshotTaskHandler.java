@@ -28,9 +28,6 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
     @Value("${command.stopAem}")
     private String stopAemCommand;
 
-    @Value("${command.offlineCompaction}")
-    private String offlineCompactionCommand;
-
     @Value("${command.offlineSnapshot}")
     private String offlineSnapshotCommand;
 
