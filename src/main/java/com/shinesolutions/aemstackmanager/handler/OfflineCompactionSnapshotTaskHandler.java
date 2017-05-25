@@ -60,6 +60,8 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
     @Value("${command.pairedInstance}")
     private String pairedInstanceCommand;
 
+    @Value("${aemStop.sleepSeconds}")
+    private int aemStopSleepSeconds;
 
     @Resource
     private CommandExecutor commandExecutor;
@@ -155,6 +157,9 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
             //stop aem on publish instance
             commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", remainingPublishIdentity));
 
+            //sleep after stop aem
+            Thread.sleep(aemStopSleepSeconds * 1000);
+
             //run offline-compaction on publish instance
             commandExecutor.execute(offlineCompactionByIdentityCommand.replaceAll("\\{identity}", remainingPublishIdentity));
 
@@ -194,6 +199,9 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
         //stop aem on publish instance
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", publishIdentity));
 
+        //sleep after stop aem
+        Thread.sleep(aemStopSleepSeconds * 1000);
+
         //run offline-compaction on publish instance
         commandExecutor.execute(offlineCompactionByIdentityCommand.replaceAll("\\{identity}", publishIdentity));
 
@@ -217,6 +225,9 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
 
         //stop author-primary
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
+
+        //sleep after stop aem
+        Thread.sleep(aemStopSleepSeconds * 1000);
 
         //run offline-compaction on both author-primary and author-standby
         commandExecutor.execute(offlineCompactionForAuthorCommand.replaceAll("\\{stack_prefix}", stackPrefix));
@@ -322,9 +333,7 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
             logger.error("Found " + publishCount + " publish instances. Unhealthy stack.");
         }
 
-
         return false;
-
 
     }
 

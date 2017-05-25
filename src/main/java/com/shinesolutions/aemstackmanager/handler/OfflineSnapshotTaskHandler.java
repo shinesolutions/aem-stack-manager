@@ -52,6 +52,8 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
     @Value("${command.pairedInstance}")
     private String pairedInstanceCommand;
 
+    @Value("${aemStop.sleepSeconds}")
+    private int aemStopSleepSeconds;
 
     @Resource
     private CommandExecutor commandExecutor;
@@ -138,6 +140,9 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
         //stop aem on publish instance
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", publishIdentity));
 
+        //sleep after stop aem
+        Thread.sleep(aemStopSleepSeconds * 1000);
+
         //take ebs snapshot of publish instance
         commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", publishIdentity));
 
@@ -160,6 +165,9 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
 
         //stop author-primary
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
+
+        //sleep after stop aem
+        Thread.sleep(aemStopSleepSeconds * 1000);
 
         //take ebs snapshot of author-primary
         commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
