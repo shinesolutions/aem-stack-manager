@@ -11,11 +11,13 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
-public class OfflineSnapshotTaskHandler implements TaskHandler {
+public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
 
     private static final String AUTHOR_PRIMARY = "author-primary";
     private static final String AUTHOR_STANDBY = "author-standby";
@@ -28,8 +30,11 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
     @Value("${command.stopAem}")
     private String stopAemCommand;
 
-    @Value("${command.offlineCompaction}")
-    private String offlineCompactionCommand;
+    @Value("${command.offlineCompactionForAuthor}")
+    private String offlineCompactionForAuthorCommand;
+
+    @Value("${command.offlineCompactionByIdentity}")
+    private String offlineCompactionByIdentityCommand;
 
     @Value("${command.offlineSnapshot}")
     private String offlineSnapshotCommand;
@@ -77,7 +82,7 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
             if (isHealthy(stack)) {
 
                 //execute offline snapshot
-                executeOfflineSnapshot(stackPrefix, stack);
+                executeOfflineCompactionSnapshot(stackPrefix, stack);
 
                 //successful remove from queue
                 return true;
@@ -103,7 +108,7 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
 
     }
 
-    private void executeOfflineSnapshot(String stackPrefix, Map<String, String> stack) throws IOException, InterruptedException {
+    private void executeOfflineCompactionSnapshot(String stackPrefix, Map<String, String> stack) throws IOException, InterruptedException {
 
         String authorPrimaryIdentity = null;
         String authorStandbyIdentity = null;
@@ -127,19 +132,70 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
 
         }
 
-        executeOfflineSnapshotForAuthor(stackPrefix, authorPrimaryIdentity, authorStandbyIdentity);
+        executeOfflineCompactionSnapshotForAuthor(stackPrefix, authorPrimaryIdentity, authorStandbyIdentity);
 
-        executeOfflineSnapshotForPublish(publishIdentity, publishDispatcherIdentity);
+        executeOfflineCompactionSnapshotForPublish(publishIdentity, publishDispatcherIdentity);
+
+        executeOfflineCompactionForRemainingPublish(stack, publishIdentity);
 
     }
 
-    private void executeOfflineSnapshotForPublish(String publishIdentity, String publishDispatcherIdentity) throws IOException, InterruptedException {
+    private void executeOfflineCompactionForRemainingPublish(Map<String, String> stack, String compactedPublishIdentity) throws IOException, InterruptedException {
+
+        String publishDispatcherIdentity;
+
+        //cycle through remaining publish instances and compact.
+        for(String remainingPublishIdentity: getRemainingPublishIdentities(stack, compactedPublishIdentity)){
+
+            publishDispatcherIdentity = findPairedPublishDispatcher(remainingPublishIdentity);
+
+            //move the selected publish-dispatcher into standby mode
+            commandExecutor.execute(enterStandbyByIdentityCommand.replaceAll("\\{identity}", publishDispatcherIdentity));
+
+            //stop aem on publish instance
+            commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", remainingPublishIdentity));
+
+            //run offline-compaction on publish instance
+            commandExecutor.execute(offlineCompactionByIdentityCommand.replaceAll("\\{identity}", remainingPublishIdentity));
+
+            //start aem on publish instance
+            commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", remainingPublishIdentity));
+
+            //move the selected publish-dispatcher out of standby mode
+            commandExecutor.execute(exitStandbyByIdentityCommand.replaceAll("\\{identity}", publishDispatcherIdentity));
+
+        }
+
+    }
+
+    private String[] getRemainingPublishIdentities(Map<String, String> stack, String publishIdentity) {
+
+        List<String> remainingPublishIdentities = new ArrayList<>();
+
+        for (String identity : stack.keySet()) {
+
+            if (PUBLISH.equals(stack.get(identity)) && !identity.equals(publishIdentity)) {
+
+                remainingPublishIdentities.add(identity);
+
+            }
+
+        }
+
+        return remainingPublishIdentities.toArray(new String[remainingPublishIdentities.size()]);
+    }
+
+
+    private void executeOfflineCompactionSnapshotForPublish(String publishIdentity, String publishDispatcherIdentity) throws IOException, InterruptedException {
 
         //move the selected publish-dispatcher into standby mode
         commandExecutor.execute(enterStandbyByIdentityCommand.replaceAll("\\{identity}", publishDispatcherIdentity));
 
         //stop aem on publish instance
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", publishIdentity));
+
+        //run offline-compaction on publish instance
+        commandExecutor.execute(offlineCompactionByIdentityCommand.replaceAll("\\{identity}", publishIdentity));
 
         //take ebs snapshot of publish instance
         commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", publishIdentity));
@@ -149,11 +205,9 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
 
         //move the selected publish-dispatcher out of standby mode
         commandExecutor.execute(exitStandbyByIdentityCommand.replaceAll("\\{identity}", publishDispatcherIdentity));
-
     }
 
-
-    private void executeOfflineSnapshotForAuthor(String stackPrefix, String authorPrimaryIdentity, String authorStandbyIdentity) throws IOException, InterruptedException {
+    private void executeOfflineCompactionSnapshotForAuthor(String stackPrefix, String authorPrimaryIdentity, String authorStandbyIdentity) throws IOException, InterruptedException {
 
         //move all author-dispatcher instances into standby
         commandExecutor.execute(enterStandbyByComponentCommand.replaceAll("\\{stack_prefix}", stackPrefix).replaceAll("\\{component}", "author-dispatcher"));
@@ -163,6 +217,9 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
 
         //stop author-primary
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
+
+        //run offline-compaction on both author-primary and author-standby
+        commandExecutor.execute(offlineCompactionForAuthorCommand.replaceAll("\\{stack_prefix}", stackPrefix));
 
         //take ebs snapshot of author-primary
         commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
