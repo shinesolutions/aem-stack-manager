@@ -60,6 +60,9 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
     @Value("${command.pairedInstance}")
     private String pairedInstanceCommand;
 
+    @Value("${command.waitUntilReady}")
+    private String waitUntilReadyCommand;
+
     @Value("${aemStop.sleepSeconds}")
     private int aemStopSleepSeconds;
 
@@ -146,6 +149,9 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
 
         String publishDispatcherIdentity;
 
+        //wait for compactedPublishInstance to be healthy
+        commandExecutor.execute(waitUntilReadyCommand.replaceAll("\\{identity}", compactedPublishIdentity));
+
         //cycle through remaining publish instances and compact.
         for(String remainingPublishIdentity: getRemainingPublishIdentities(stack, compactedPublishIdentity)){
 
@@ -168,6 +174,9 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
 
             //move the selected publish-dispatcher out of standby mode
             commandExecutor.execute(exitStandbyByIdentityCommand.replaceAll("\\{identity}", publishDispatcherIdentity));
+
+            //wait for remainingPublishIdentity to be healthy before continuing
+            commandExecutor.execute(waitUntilReadyCommand.replaceAll("\\{identity}", remainingPublishIdentity));
 
         }
 
