@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinesolutions.aemstackmanager.model.TaskMessage;
 import com.shinesolutions.aemstackmanager.service.CommandExecutor;
+import org.apache.commons.exec.ExecuteException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,6 +63,12 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
 
     @Value("${command.waitUntilReady}")
     private String waitUntilReadyCommand;
+
+    @Value("${command.checkOakRunProcess}")
+    private String checkOakRunProcessCommand;
+
+    @Value("${command.checkCrxQuickstartProcess}")
+    private String checkCrxQuickstartProcessCommand;
 
     @Value("${aemStop.sleepSeconds}")
     private int aemStopSleepSeconds;
@@ -163,11 +170,17 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
             //stop aem on publish instance
             commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", remainingPublishIdentity));
 
+            //Wait for the crx-quickstart process to no longer exist before starting compaction.
+            checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, remainingPublishIdentity);
+
             //sleep after stop aem
             Thread.sleep(aemStopSleepSeconds * 1000);
 
             //run offline-compaction on publish instance
             commandExecutor.execute(offlineCompactionByIdentityCommand.replaceAll("\\{identity}", remainingPublishIdentity));
+
+            //Wait for compaction processes to no longer exist before starting aem.
+            checkProcessEnded(checkOakRunProcessCommand, 90, 10, remainingPublishIdentity);
 
             //start aem on publish instance
             commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", remainingPublishIdentity));
@@ -178,6 +191,50 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
             //wait for remainingPublishIdentity to be healthy before continuing
             commandExecutor.execute(waitUntilReadyCommand.replaceAll("\\{identity}", remainingPublishIdentity));
 
+        }
+
+    }
+
+    private void checkProcessEnded(String processCommand, int repeatCount, int sleepSeconds, String identity) throws IOException, InterruptedException {
+
+        String command = processCommand.replaceAll("\\{identity}", identity);
+
+        boolean processEnded = false;
+
+        for(int i = 0; i < repeatCount; i++){
+
+            List<String> output = commandExecutor.executeReturnOutputAsList(command);
+
+            for(int j = 0; j < output.size(); j++){
+
+                String message = output.get(j);
+
+                if(message.contains("Output:")){
+
+                    j++;
+
+                    String response = output.get(j);
+
+                    if(response.trim().equals("0")){
+                        processEnded = true;
+                    }
+
+                    break;
+
+                }
+
+            }
+
+            if(processEnded){
+                break;
+            }
+
+            Thread.sleep(sleepSeconds * 1000);
+
+        }
+
+        if(!processEnded){
+            throw new ExecuteException("Process has not ended", 1);
         }
 
     }
@@ -208,11 +265,17 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
         //stop aem on publish instance
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", publishIdentity));
 
+        //Wait for the crx-quickstart process to no longer exist before starting compaction.
+        checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, publishIdentity);
+
         //sleep after stop aem
         Thread.sleep(aemStopSleepSeconds * 1000);
 
         //run offline-compaction on publish instance
         commandExecutor.execute(offlineCompactionByIdentityCommand.replaceAll("\\{identity}", publishIdentity));
+
+        //Wait for compaction processes to no longer exist before starting aem.
+        checkProcessEnded(checkOakRunProcessCommand, 90, 10, publishIdentity);
 
         //take ebs snapshot of publish instance
         commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", publishIdentity));
@@ -232,14 +295,29 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
         //stop author-standby
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorStandbyIdentity));
 
+        //Wait for the crx-quickstart process to no longer exist before starting compaction.
+        checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, authorStandbyIdentity);
+
+        //sleep after stop aem
+        Thread.sleep(aemStopSleepSeconds * 1000);
+
         //stop author-primary
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
+
+        //Wait for the crx-quickstart process to no longer exist before starting compaction.
+        checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, authorPrimaryIdentity);
 
         //sleep after stop aem
         Thread.sleep(aemStopSleepSeconds * 1000);
 
         //run offline-compaction on both author-primary and author-standby
         commandExecutor.execute(offlineCompactionForAuthorCommand.replaceAll("\\{stack_prefix}", stackPrefix));
+
+        //Wait for compaction processes to no longer exist before starting aem.
+        checkProcessEnded(checkOakRunProcessCommand, 90, 10, authorPrimaryIdentity);
+
+        //Wait for compaction processes to no longer exist before starting aem.
+        checkProcessEnded(checkOakRunProcessCommand, 12, 10, authorStandbyIdentity);
 
         //take ebs snapshot of author-primary
         commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", authorPrimaryIdentity));

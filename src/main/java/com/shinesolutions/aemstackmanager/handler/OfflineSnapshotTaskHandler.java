@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinesolutions.aemstackmanager.model.TaskMessage;
 import com.shinesolutions.aemstackmanager.service.CommandExecutor;
+import org.apache.commons.exec.ExecuteException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -51,6 +53,9 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
 
     @Value("${command.pairedInstance}")
     private String pairedInstanceCommand;
+
+    @Value("${command.checkCrxQuickstartProcess}")
+    private String checkCrxQuickstartProcessCommand;
 
     @Value("${aemStop.sleepSeconds}")
     private int aemStopSleepSeconds;
@@ -140,6 +145,9 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
         //stop aem on publish instance
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", publishIdentity));
 
+        //Wait for the crx-quickstart process to no longer exist before starting snapshot.
+        checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, publishIdentity);
+
         //sleep after stop aem
         Thread.sleep(aemStopSleepSeconds * 1000);
 
@@ -163,8 +171,14 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
         //stop author-standby
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorStandbyIdentity));
 
+        //Wait for the crx-quickstart process to no longer exist before starting snapshot.
+        checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, authorStandbyIdentity);
+
         //stop author-primary
         commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
+
+        //Wait for the crx-quickstart process to no longer exist before starting snapshot.
+        checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, authorPrimaryIdentity);
 
         //sleep after stop aem
         Thread.sleep(aemStopSleepSeconds * 1000);
@@ -273,6 +287,50 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
 
         return false;
 
+
+    }
+
+    private void checkProcessEnded(String processCommand, int repeatCount, int sleepSeconds, String identity) throws IOException, InterruptedException {
+
+        String command = processCommand.replaceAll("\\{identity}", identity);
+
+        boolean processEnded = false;
+
+        for(int i = 0; i < repeatCount; i++){
+
+            List<String> output = commandExecutor.executeReturnOutputAsList(command);
+
+            for(int j = 0; j < output.size(); j++){
+
+                String message = output.get(j);
+
+                if(message.contains("Output:")){
+
+                    j++;
+
+                    String response = output.get(j);
+
+                    if(response.trim().equals("0")){
+                        processEnded = true;
+                    }
+
+                    break;
+
+                }
+
+            }
+
+            if(processEnded){
+                break;
+            }
+
+            Thread.sleep(sleepSeconds * 1000);
+
+        }
+
+        if(!processEnded){
+            throw new ExecuteException("Process has not ended", 1);
+        }
 
     }
 
