@@ -57,6 +57,9 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
     @Value("${command.checkCrxQuickstartProcess}")
     private String checkCrxQuickstartProcessCommand;
 
+    @Value("${command.checkSnapshotProcess}")
+    private String checkSnapshotProcessCommand;
+
     @Value("${aemStop.sleepSeconds}")
     private int aemStopSleepSeconds;
 
@@ -154,6 +157,9 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
         //take ebs snapshot of publish instance
         commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", publishIdentity));
 
+        //Wait for the snapshot_backup process to no longer exist before starting aem.
+        checkProcessEnded(checkSnapshotProcessCommand, 90, 10, publishIdentity);
+
         //start aem on publish instance
         commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", publishIdentity));
 
@@ -185,6 +191,9 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
 
         //take ebs snapshot of author-primary
         commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
+
+        //Wait for the snapshot_backup process to no longer exist before starting aem.
+        checkProcessEnded(checkSnapshotProcessCommand, 90, 10, authorPrimaryIdentity);
 
         //start aem on author-primary
         commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
