@@ -183,7 +183,7 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
             commandExecutor.execute(offlineCompactionByIdentityCommand.replaceAll("\\{identity}", remainingPublishIdentity));
 
             //Wait for compaction processes to no longer exist before starting aem.
-            checkProcessEnded(checkOakRunProcessCommand, 120, 10, remainingPublishIdentity);
+            checkProcessEnded(checkOakRunProcessCommand, 360, 10, remainingPublishIdentity);
 
             //start aem on publish instance
             commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", remainingPublishIdentity));
@@ -283,7 +283,7 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
         commandExecutor.execute(offlineCompactionByIdentityCommand.replaceAll("\\{identity}", publishIdentity));
 
         //Wait for compaction processes to no longer exist before starting aem.
-        checkProcessEnded(checkOakRunProcessCommand, 120, 10, publishIdentity);
+        checkProcessEnded(checkOakRunProcessCommand, 360, 10, publishIdentity);
 
         //take ebs snapshot of publish instance
         commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", publishIdentity));
@@ -325,7 +325,7 @@ public class OfflineCompactionSnapshotTaskHandler implements TaskHandler {
         commandExecutor.execute(offlineCompactionForAuthorCommand.replaceAll("\\{stack_prefix}", stackPrefix));
 
         //Wait for compaction processes to no longer exist before starting aem.
-        checkProcessEnded(checkOakRunProcessCommand, 120, 10, authorPrimaryIdentity);
+        checkProcessEnded(checkOakRunProcessCommand, 360, 10, authorPrimaryIdentity);
 
         //Wait for compaction processes to no longer exist before starting aem.
         checkProcessEnded(checkOakRunProcessCommand, 12, 10, authorStandbyIdentity);
