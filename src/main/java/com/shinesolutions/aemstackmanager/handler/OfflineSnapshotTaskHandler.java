@@ -307,6 +307,8 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
 
         for(int i = 0; i < repeatCount; i++){
 
+            logger.debug("Attempt " + (i + 1) + " of " + repeatCount + ". Check Process exists.");
+
             List<String> output = commandExecutor.executeReturnOutputAsList(command);
 
             for(int j = 0; j < output.size(); j++){
@@ -330,9 +332,12 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
             }
 
             if(processEnded){
+                logger.debug("Process no longer exists. Continuing.");
                 break;
             }
 
+
+            logger.debug("Attempt " + (i + 1) + " of " + repeatCount + ". Process exists. Sleeping for " + sleepSeconds + " seconds");
             Thread.sleep(sleepSeconds * 1000);
 
         }
@@ -342,5 +347,4 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
         }
 
     }
-
 }
