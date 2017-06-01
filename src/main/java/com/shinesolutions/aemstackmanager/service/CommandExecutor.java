@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CommandExecutor {
@@ -46,14 +48,7 @@ public class CommandExecutor {
 
     public void execute(String command) throws IOException, InterruptedException {
 
-        LogOutputStream outputStream = new LogOutputStream() {
-            @Override
-            protected void processLine(String line, int level) {
-                logger.debug(line);
-            }
-        };
-
-        execute(command, outputStream);
+        execute(command, new CollectingLogOutputStream());
 
     }
 
@@ -89,6 +84,20 @@ public class CommandExecutor {
 
             logger.debug("Command execution complete. exitValue: " + exitValue);
 
+            if(outputStream instanceof CollectingLogOutputStream) {
+
+                //check lines for Exitcode: != 0
+                List<String> matches = ((CollectingLogOutputStream)outputStream).getLines().stream()
+                        .filter(it -> it.contains("Exitcode:"))
+                        .filter(it -> !it.trim().endsWith(" 0"))
+                        .collect(Collectors.toList());
+
+                if(!matches.isEmpty()){
+                    throw new ExecuteException("Execution of: " + commandLine.toString() + " Returned output containing ExitCode != 0", 1);
+                }
+
+            }
+
         } catch (IOException | InterruptedException e) {
 
             logger.error("Error executing command: " + command + ", check logs for errors", e);
@@ -103,10 +112,10 @@ public class CommandExecutor {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        LogOutputStream outputStream = new LogOutputStream() {
+        LogOutputStream outputStream = new CollectingLogOutputStream() {
             @Override
             protected void processLine(String line, int level) {
-                logger.debug(line);
+                super.processLine(line, level);
                 stringBuilder.append(line);
             }
         };
@@ -114,6 +123,16 @@ public class CommandExecutor {
         execute(command, outputStream);
 
         return stringBuilder.toString();
+
+    }
+
+    public List<String> executeReturnOutputAsList(String command) throws IOException, InterruptedException {
+
+        CollectingLogOutputStream outputStream = new CollectingLogOutputStream();
+
+        execute(command, outputStream);
+
+        return outputStream.getLines();
 
     }
 
