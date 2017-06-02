@@ -1,10 +1,10 @@
-### 0.9.2
+### 1.0.0
 * remove compaction from offline snapshot task
 * move author dispatcher and publish dispatcher to standby mode when stopping aem a part of offline snapshot task
 * add source_stack_prefix to import package command
 * create offline compaction snapshot task
 * add checks to confirm the aem process has stopped before taking snapshot and performing compaction
-* Messages can now be processed asynchronously 
+* Messages can now be processed asynchronously
 
 ### 0.9.1
 * add offline snapshot task
