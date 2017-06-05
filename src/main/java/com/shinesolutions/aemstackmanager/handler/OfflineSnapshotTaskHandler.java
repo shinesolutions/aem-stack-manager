@@ -145,23 +145,29 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
         //move the selected publish-dispatcher into standby mode
         commandExecutor.execute(enterStandbyByIdentityCommand.replaceAll("\\{identity}", publishDispatcherIdentity));
 
-        //stop aem on publish instance
-        commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", publishIdentity));
+        try {
 
-        //Wait for the crx-quickstart process to no longer exist before starting snapshot.
-        checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, publishIdentity);
+            //stop aem on publish instance
+            commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", publishIdentity));
 
-        //sleep after stop aem
-        Thread.sleep(aemStopSleepSeconds * 1000);
+            //Wait for the crx-quickstart process to no longer exist before starting snapshot.
+            checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, publishIdentity);
 
-        //take ebs snapshot of publish instance
-        commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", publishIdentity));
+            //sleep after stop aem
+            Thread.sleep(aemStopSleepSeconds * 1000);
 
-        //Wait for the snapshot_backup process to no longer exist before starting aem.
-        checkProcessEnded(checkSnapshotProcessCommand, 90, 10, publishIdentity);
+            //take ebs snapshot of publish instance
+            commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", publishIdentity));
 
-        //start aem on publish instance
-        commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", publishIdentity));
+            //Wait for the snapshot_backup process to no longer exist before starting aem.
+            checkProcessEnded(checkSnapshotProcessCommand, 90, 10, publishIdentity);
+
+        } finally {
+
+            //start aem on publish instance
+            commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", publishIdentity));
+
+        }
 
         //move the selected publish-dispatcher out of standby mode
         commandExecutor.execute(exitStandbyByIdentityCommand.replaceAll("\\{identity}", publishDispatcherIdentity));
@@ -174,32 +180,38 @@ public class OfflineSnapshotTaskHandler implements TaskHandler {
         //move all author-dispatcher instances into standby
         commandExecutor.execute(enterStandbyByComponentCommand.replaceAll("\\{stack_prefix}", stackPrefix).replaceAll("\\{component}", "author-dispatcher"));
 
-        //stop author-standby
-        commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorStandbyIdentity));
+        try {
 
-        //Wait for the crx-quickstart process to no longer exist before starting snapshot.
-        checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, authorStandbyIdentity);
+            //stop author-standby
+            commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorStandbyIdentity));
 
-        //stop author-primary
-        commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
+            //Wait for the crx-quickstart process to no longer exist before starting snapshot.
+            checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, authorStandbyIdentity);
 
-        //Wait for the crx-quickstart process to no longer exist before starting snapshot.
-        checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, authorPrimaryIdentity);
+            //stop author-primary
+            commandExecutor.execute(stopAemCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
 
-        //sleep after stop aem
-        Thread.sleep(aemStopSleepSeconds * 1000);
+            //Wait for the crx-quickstart process to no longer exist before starting snapshot.
+            checkProcessEnded(checkCrxQuickstartProcessCommand, 24, 5, authorPrimaryIdentity);
 
-        //take ebs snapshot of author-primary
-        commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
+            //sleep after stop aem
+            Thread.sleep(aemStopSleepSeconds * 1000);
 
-        //Wait for the snapshot_backup process to no longer exist before starting aem.
-        checkProcessEnded(checkSnapshotProcessCommand, 90, 10, authorPrimaryIdentity);
+            //take ebs snapshot of author-primary
+            commandExecutor.execute(offlineSnapshotCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
 
-        //start aem on author-primary
-        commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
+            //Wait for the snapshot_backup process to no longer exist before starting aem.
+            checkProcessEnded(checkSnapshotProcessCommand, 90, 10, authorPrimaryIdentity);
 
-        //start aem on author-standby
-        commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", authorStandbyIdentity));
+        } finally {
+
+            //start aem on author-primary
+            commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", authorPrimaryIdentity));
+
+            //start aem on author-standby
+            commandExecutor.execute(startAemCommand.replaceAll("\\{identity}", authorStandbyIdentity));
+
+        }
 
         //move all author-dispatcher instances out of standby
         commandExecutor.execute(exitStandbyByComponentCommand.replaceAll("\\{stack_prefix}", stackPrefix).replaceAll("\\{component}", "author-dispatcher"));
