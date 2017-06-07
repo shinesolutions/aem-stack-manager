@@ -1,5 +1,5 @@
 ### 1.0.1
-* restart the aem service if an exception occurs during offline snapshot and compaction tasks
+* restart the aem service and put dispatchers back in service if an exception occurs during offline snapshot and compaction tasks
 
 ### 1.0.0
 * remove compaction from offline snapshot task
